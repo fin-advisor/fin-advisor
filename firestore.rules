@@ -1,0 +1,87 @@
+/**
+ * @fileOverview Firestore Security Rules for a financial planning application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model. Each user can only access
+ * and modify data associated with their own user ID.
+ *
+ * Data Structure:
+ * - User profiles are stored under /users/{userId}/profiles/{profileId}.
+ * - Chat threads are stored under /users/{userId}/threads/{threadId}.
+ * - Chat messages are stored under /users/{userId}/threads/{threadId}/messages/{messageId}.
+ *
+ * Key Security Decisions:
+ * - Users can only create, read, update, and delete their own profiles, threads, and messages.
+ * - Listing data from other users is disallowed.
+ * - The 'userId' field is denormalized into all documents to avoid 'get()'
+ *   operations in security rules, ensuring Authorization Independence.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Controls access to user profile documents. The document ID must match the user's UID.
+     * @path /users/{userId}/profiles/{profileId}
+     */
+    match /users/{userId}/profiles/{profileId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == userId && request.auth.uid == profileId;
+      }
+
+      function isCreatingOwnProfile() {
+        return isOwner() && request.resource.data.userId == userId;
+      }
+
+      function isUpdatingOwnProfile() {
+         return isOwner() && request.resource.data.userId == resource.data.userId;
+      }
+
+      allow get: if isOwner();
+      allow list: if request.auth != null && request.auth.uid == userId;
+      allow create: if isCreatingOwnProfile();
+      allow update: if isUpdatingOwnProfile();
+      allow delete: if isOwner();
+    }
+    
+    /**
+     * @description Controls access to the collection of chat threads for a user.
+     * @path /users/{userId}/threads/{threadId}
+     */
+    match /users/{userId}/threads/{threadId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      
+      function isCreatingOwnThread() {
+          return isOwner() && request.resource.data.userId == userId;
+      }
+      
+      function isUpdatingOwnThread() {
+          return isOwner() && request.resource.data.userId == resource.data.userId;
+      }
+
+      allow get, list, delete: if isOwner();
+      allow create: if isCreatingOwnThread();
+      allow update: if isUpdatingOwnThread();
+    }
+
+
+    /**
+     * @description Controls access to chat messages within a specific thread.
+     * @path /users/{userId}/threads/{threadId}/messages/{messageId}
+     */
+    match /users/{userId}/threads/{threadId}/messages/{messageId} {
+       function isOwner() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      function isExistingOwner() {
+        return isOwner() && resource != null;
+      }
+      allow get, list, delete: if isOwner();
+      allow create: if isOwner() && request.resource.data.userId == userId && request.resource.data.threadId == threadId;
+      allow update: if isExistingOwner() && request.resource.data.userId == resource.data.userId;
+    }
+  }
+}

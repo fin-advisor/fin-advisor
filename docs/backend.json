@@ -1,0 +1,192 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user's financial profile.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the user in the authentication system. This is the Firebase UID."
+        },
+        "startingCapital": {
+          "type": "number",
+          "description": "The user's initial capital available for investment."
+        },
+        "monthlyIncome": {
+          "type": "number",
+          "description": "The user's monthly income."
+        },
+        "monthlySavingsAmount": {
+          "type": "number",
+          "description": "The user's monthly savings amount."
+        },
+        "age": {
+          "type": "number",
+          "description": "The user's age."
+        },
+        "riskTolerance": {
+          "type": "string",
+          "description": "The user's risk tolerance (low, medium, high)."
+        },
+        "financialGoals": {
+          "type": "array",
+          "description": "The user's main financial goals.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "startingCapital",
+        "monthlyIncome",
+        "monthlySavingsAmount",
+        "age",
+        "riskTolerance",
+        "financialGoals"
+      ]
+    },
+    "ChatThread": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ChatThread",
+      "type": "object",
+      "description": "Represents a single chat conversation thread.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ChatThread entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who owns the thread."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name or title of the chat thread."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the thread was created."
+        },
+        "lastUpdatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp of the last message in the thread."
+        }
+      },
+      "required": ["id", "userId", "name", "createdAt", "lastUpdatedAt"]
+    },
+    "ChatMessage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ChatMessage",
+      "type": "object",
+      "description": "Represents a single chat message within a thread.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ChatMessage entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who sent the message."
+        },
+        "threadId": {
+          "type": "string",
+          "description": "Reference to the ChatThread this message belongs to."
+        },
+        "role": {
+          "type": "string",
+          "description": "Indicates who sent the message (user or assistant)."
+        },
+        "content": {
+          "type": "string",
+          "description": "The text content of the message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The timestamp of the message.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "threadId",
+        "role",
+        "content",
+        "timestamp"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/profiles/{profileId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profile information. The 'userId' and 'profileId' parameters are the Firebase UID. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase UID of the user."
+            },
+            {
+              "name": "profileId",
+              "description": "The Firebase UID of the user, used as the document ID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/threads/{threadId}",
+        "definition": {
+            "entityName": "ChatThread",
+            "schema": { "$ref": "#/backend/entities/ChatThread" },
+            "description": "Stores metadata for each chat thread belonging to a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/threads/{threadId}/messages/{messageId}",
+        "definition": {
+          "entityName": "ChatMessage",
+          "schema": {
+            "$ref": "#/backend/entities/ChatMessage"
+          },
+          "description": "Stores chat messages for a specific thread. The 'userId' parameter is the Firebase UID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase UID of the user."
+            },
+            {
+               "name": "threadId",
+               "description": "The unique identifier for the chat thread."
+            },
+            {
+              "name": "messageId",
+              "description": "The unique identifier for the chat message."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed for a multi-threaded chat application. It ensures security and scalability by nesting `threads` and `messages` under the user's ID. User profiles are stored separately. This path-based ownership simplifies security rules, adhering to principles of Authorization Independence and Clarity of Intent."
+  }
+}
