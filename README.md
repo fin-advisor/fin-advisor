@@ -10,7 +10,7 @@
 
 Unlike generic chatbots, FinAdvisor integrates individual user data (income, savings, risk tolerance) with domain-specific financial logic to offer tailored "orientational" advice. The system addresses the gap in financial literacy by leveraging Retrieval-Augmented Generation (RAG) to provide reliable information.
 
-![FinAdvisor System Architecture Diagram](path/to/architecture-diagram.png)
+<img width="2944" height="1317" alt="FinAdvisor-Architecture-Diagram" src="https://github.com/user-attachments/assets/c4b2086d-19cd-44d8-85aa-1c68e9b1a84c" />
 
 ## ✨ Key Features (Prototype)
 
