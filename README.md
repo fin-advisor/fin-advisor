@@ -6,33 +6,44 @@
 
 ## 📖 Overview
 
-**FinAdvisor** is a Generative AI-supported financial assistant designed to democratize access to financial knowledge. It combines personalized financial profile analysis with Large Language Model (LLM) capabilities to provide accessible, context-aware guidance on budgeting, saving, and investing.
+**FinAdvisor** is a Generative AI-supported financial assistant designed to democratize access to financial knowledge. It combines personalized financial profile analysis with Large Language Model (LLM) capabilities to provide accessible, context-aware guidance on saving and investing.
 
-Unlike generic chatbots, FinAdvisor integrates individual user data (income, goals, risk tolerance) with domain-specific financial logic to offer tailored "orientational" advice, helping users bridge the gap between financial literacy and professional consulting.
+Unlike generic chatbots, FinAdvisor integrates individual user data (income, savings, risk tolerance) with domain-specific financial logic to offer tailored "orientational" advice. The system addresses the gap in financial literacy by leveraging Retrieval-Augmented Generation (RAG) to provide reliable information.
 
-## ✨ Key Features
+![FinAdvisor System Architecture Diagram](path/to/architecture-diagram.png)
+
+## ✨ Key Features (Prototype)
 
 * **🔐 Secure Authentication**: User account management via **Firebase Auth** ensuring data privacy and scoped access.
-* **👤 Financial Onboarding**: Guided wizard to collect financial baselines: income, savings, age, risk tolerance, and specific goals.
+* **👤 Financial Onboarding**: Guided wizard to collect financial baselines: starting capital, monthly income, savings, age, risk tolerance, and specific goals.
 * **💬 AI-Powered Advice**: Context-aware chat interface powered by **Google Genkit** and **Vertex AI Gemini**.
-    * *RAG (Retrieval-Augmented Generation)* approach to provide grounded answers.
-    * *System Prompting* that acts as a cautious financial coach (not a licensed advisor).
-* **📊 Dynamic Dashboard**: Real-time overview of financial health, including:
-    * **Budgeting**: Automated 50/30/20 rule suggestions adapted to Swiss living costs.
-    * **Investment Strategy**: High-level asset allocation proposals (e.g., ETF vs. Bonds) based on risk profiles.
-    * **Goal Projection**: Calculators to estimate timelines for reaching specific savings targets.
-* **📄 Document Integration**: (Prototype phase) Capability to process uploaded financial documents for context.
+    * *RAG (Retrieval-Augmented Generation)* architecture to access verified information.
+    * *Context Integration*: Developers can attach specific PDFs/Documents to tailor the chatbot's knowledge base and regulatory compliance.
+* **📊 Dynamic Dashboard**: Real-time overview of the user's financial profile, including:
+    * **Profile Management**: Visual display of income, savings, and risk parameters.
+    * **Goal Projection**: A module that calculates the estimated time required to reach a specific financial target based on user inputs and assumed returns.
+
+## 🔮 Future Roadmap
+*Based on the seminar thesis analysis, the following extensions are planned:*
+
+* **Budget Planner**: Automated splitting of income into pots (short/mid/long-term) with "what-if" scenarios.
+* **Portfolio Scanner**: Functionality to upload portfolio screenshots for AI-based risk profile analysis.
+* **Money Educator**: Educational modules with simulated outcomes for instruments like money market funds.
+* **Charting Assistant**: Technical analysis support suggesting price ranges for entry/exit.
+* **High-Risk Advisor**: Conditional advice for complex products (e.g., options), enabled only after knowledge testing.
+* **Human Assistance**: Integration to request meetings with certified human advisors.
 
 ## 🛠️ Tech Stack
 
 ### Core Framework
-* **Frontend**: [Next.js 15](https://nextjs.org/) (App Router)
-* **Language**: [TypeScript](https://www.typescriptlang.org/)
-* **Styling**: [Tailwind CSS](https://tailwindcss.com/) with [Radix UI](https://www.radix-ui.com/) components.
+* **Frontend**: [Next.js](https://nextjs.org/) (App Router)
+* **Language**: [TypeScript](https://www.typescriptlang.org/) and JavaScript
+* **Styling**: [Tailwind CSS](https://tailwindcss.com/) with **ShadCN UI** components.
 
 ### Backend & AI
-* **BaaS**: [Firebase](https://firebase.google.com/) (Firestore, Authentication, App Hosting).
-* **AI Framework**: [Genkit](https://firebase.google.com/docs/genkit) (`@genkit-ai/google-genai`, `@genkit-ai/next`).
+* **Development Platform**: **Google Firebase Studio**.
+* **BaaS**: [Firebase](https://firebase.google.com/) (Firestore, Authentication, Server Actions).
+* **AI Framework**: [Genkit](https://firebase.google.com/docs/genkit).
 * **Model**: Google Vertex AI / Gemini.
 
 ## 🚀 Getting Started
@@ -44,11 +55,10 @@ Unlike generic chatbots, FinAdvisor integrates individual user data (income, goa
 
 ### Installation
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/your-username/fin-advisor.git](https://github.com/your-username/fin-advisor.git)
-    cd fin-advisor
-    ```
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/your-username/fin-advisor.git](https://github.com/your-username/fin-advisor.git)
+   cd fin-advisor
 
 2.  **Install dependencies:**
     ```bash
@@ -88,11 +98,10 @@ npm run genkit:dev
 ## 📂 Project Structure
 
 * `src/app`: Next.js App Router pages and layouts.
-* `src/ai`: Genkit flows, prompts, and AI logic (e.g., `investment-strategy-suggestions.ts`).
+* `src/ai`: Genkit flows, prompts, and AI logic.
 * `src/components`: Reusable UI components (Dashboard, Chat Interface, Auth forms).
-* `src/firebase`: Firebase configuration and helper hooks (`use-collection`, `auth-provider`).
+* `src/firebase`: Firebase configuration and helper hooks.
 * `src/lib`: Utility functions and type definitions.
-* `docs`: Project documentation and blueprints.
 
 ## Disclaimer
 *This application is a seminar prototype. The financial advice generated by the AI is for informational and educational purposes only and does not constitute professional financial advice, investment advice, or tax advice.*
